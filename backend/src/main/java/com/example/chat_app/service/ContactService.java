@@ -8,6 +8,8 @@ import com.example.chat_app.repository.ContactRepository;
 import com.example.chat_app.repository.UserRepository;
 
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -24,7 +26,8 @@ public class ContactService {
     private ContactRepository contactRepo;
     private SimpMessagingTemplate messagingTemplate;
 
-    public ContactService(UserRepository userRepo, ContactRepository contactRepo, SimpMessagingTemplate messagingTemplate) {
+    public ContactService(UserRepository userRepo, ContactRepository contactRepo,
+            SimpMessagingTemplate messagingTemplate) {
         this.userRepo = userRepo;
         this.contactRepo = contactRepo;
         this.messagingTemplate = messagingTemplate;
@@ -39,32 +42,33 @@ public class ContactService {
 
         return matchedUsers.stream()
                 .map(user -> new ContactMatchResponse(
-                user.getId(),
-                user.getUsername(),
-                user.getName(),
-                user.getPhoneNumber()
-                ))
+                        user.getId(),
+                        user.getUsername(),
+                        user.getName(),
+                        user.getPhoneNumber()))
                 .collect(Collectors.toList());
     }
 
-
     private ContactDisplayResponse convertToDisplayDto(Contact contact) {
         return new ContactDisplayResponse(
-            contact.getId(),
-            contact.getContactUser().getId(),
-            contact.getDisplayName(),
-            contact.getContactUser().getUsername(),
-            contact.getContactUser().getPhoneNumber()
-        );
+                contact.getId(),
+                contact.getContactUser().getId(),
+                contact.getDisplayName(),
+                contact.getContactUser().getUsername(),
+                contact.getContactUser().getPhoneNumber());
     }
 
+    /**
+     * Get all contacts for a user - CACHED for 10 minutes.
+     */
     @Transactional
-    public List<ContactDisplayResponse> getAllContacts(User owner){
+    @Cacheable(value = "contacts", key = "#owner.id")
+    public List<ContactDisplayResponse> getAllContacts(User owner) {
         List<Contact> contacts = contactRepo.findAllByOwner(owner);
 
-       return contacts.stream()
-            .map(this::convertToDisplayDto)
-            .collect(Collectors.toList());
+        return contacts.stream()
+                .map(this::convertToDisplayDto)
+                .collect(Collectors.toList());
     }
 
     @Transactional
@@ -74,12 +78,12 @@ public class ContactService {
                         user.getId(),
                         user.getUsername(),
                         user.getPhoneNumber(),
-                        user.getName()
-                ));
+                        user.getName()));
     }
 
     @Transactional
-    public ContactDisplayResponse addContact(User owner, AddContactRequest request){
+    @CacheEvict(value = "contacts", key = "#owner.id")
+    public ContactDisplayResponse addContact(User owner, AddContactRequest request) {
 
         User contactUser = userRepo.findByPhoneNumber(request.targetPhoneNumber())
                 .orElseThrow(() -> new AppException("Target user not found", HttpStatus.NOT_FOUND));
@@ -100,28 +104,28 @@ public class ContactService {
         Contact savedContact = contactRepo.save(newContact);
 
         ContactNotificationDto notification = new ContactNotificationDto(
-        owner.getId(), 
-        owner.getUsername(), 
-        "CONTACT_ADDED"
-        );
+                owner.getId(),
+                owner.getUsername(),
+                "CONTACT_ADDED");
 
         messagingTemplate.convertAndSendToUser(
-        contactUser.getUsername(), 
-        "/queue/contactUpdates", 
-        notification
-        );
+                contactUser.getUsername(),
+                "/queue/contactUpdates",
+                notification);
 
         return convertToDisplayDto(savedContact);
     }
 
     @Transactional
+    @CacheEvict(value = "contacts", key = "#owner.id")
     public ContactDisplayResponse updateContact(User owner, UpdateContactRequest request) {
         User targetUser = userRepo.findById(request.targetUserId())
                 .orElseThrow(() -> new AppException("Target user not found", HttpStatus.NOT_FOUND));
 
         Contact relationship = contactRepo
                 .findByOwnerAndContactUser(owner, targetUser)
-                .orElseThrow(() -> new AppException("Contact relationship not found or unauthorized", HttpStatus.FORBIDDEN));
+                .orElseThrow(
+                        () -> new AppException("Contact relationship not found or unauthorized", HttpStatus.FORBIDDEN));
 
         boolean userNeedsSaving = false;
         boolean phoneNumberUpdated = false;
@@ -133,7 +137,7 @@ public class ContactService {
         }
 
         String newDisplay = request.newDisplayName();
-        if(newDisplay != null && !newDisplay.trim().isEmpty()) {
+        if (newDisplay != null && !newDisplay.trim().isEmpty()) {
             relationship.setDisplayName(newDisplay);
             contactRepo.save(relationship);
         }
@@ -143,23 +147,22 @@ public class ContactService {
         }
 
         if (phoneNumberUpdated) {
-        ContactNotificationDto notification = new ContactNotificationDto(
-                owner.getId(), 
-                owner.getUsername(), 
-                "CONTACT_DETAILS_UPDATED"
-            );
+            ContactNotificationDto notification = new ContactNotificationDto(
+                    owner.getId(),
+                    owner.getUsername(),
+                    "CONTACT_DETAILS_UPDATED");
             messagingTemplate.convertAndSendToUser(
-                targetUser.getUsername(), 
-                "/queue/contactUpdates", 
-                notification
-            );
+                    targetUser.getUsername(),
+                    "/queue/contactUpdates",
+                    notification);
         }
 
-    return convertToDisplayDto(relationship);
+        return convertToDisplayDto(relationship);
     }
 
     @Transactional
-    public void deleteContact(User owner, UUID contactUserId){
+    @CacheEvict(value = "contacts", key = "#owner.id")
+    public void deleteContact(User owner, UUID contactUserId) {
 
         User targetUser = userRepo.getReferenceById(contactUserId);
 
@@ -170,15 +173,13 @@ public class ContactService {
         contactRepo.delete(contactToDelete);
 
         ContactNotificationDto notification = new ContactNotificationDto(
-            owner.getId(), 
-            owner.getUsername(), 
-            "CONTACT_REMOVED"
-        );
+                owner.getId(),
+                owner.getUsername(),
+                "CONTACT_REMOVED");
 
         messagingTemplate.convertAndSendToUser(
-            targetUser.getUsername(), 
-            "/queue/contactUpdates", 
-            notification
-        );
+                targetUser.getUsername(),
+                "/queue/contactUpdates",
+                notification);
     }
 }

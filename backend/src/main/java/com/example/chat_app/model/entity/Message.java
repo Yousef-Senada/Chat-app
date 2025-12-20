@@ -1,18 +1,26 @@
 package com.example.chat_app.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.util.UUID;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import java.time.LocalDateTime;
 
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
 @Entity
-@Table(name = "messages")
+@Table(name = "messages", indexes = {
+        // Composite index for fetching messages by chat ordered by time (most common
+        // query)
+        @Index(name = "idx_messages_chat_sent", columnList = "chat_id, sent_at DESC"),
+        // Index for sender lookups
+        @Index(name = "idx_messages_sender", columnList = "sender_id")
+})
 public class Message {
     @Id
     @GeneratedValue(generator = "UUID")
@@ -27,10 +35,14 @@ public class Message {
     @Enumerated(EnumType.STRING)
     private Enums type;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @JsonIgnore
+    @ToString.Exclude
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sender_id", nullable = false)
     private User sender;
 
+    @JsonIgnore
+    @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "chat_id", nullable = false)
     private Chat chat;

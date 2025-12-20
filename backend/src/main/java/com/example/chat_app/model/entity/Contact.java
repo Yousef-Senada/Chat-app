@@ -6,34 +6,33 @@ import lombok.*;
 
 import java.util.UUID;
 
-
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(
-        name = "contacts",
-        uniqueConstraints = {
-                @UniqueConstraint(columnNames = {"owner_user_id", "contact_user_id"})
-        }
-)
-
+@Table(name = "contacts", uniqueConstraints = {
+                @UniqueConstraint(columnNames = { "owner_user_id", "contact_user_id" })
+}, indexes = {
+                @Index(name = "idx_contacts_owner", columnList = "owner_user_id")
+})
 public class Contact {
-    @Id
-    @GeneratedValue(generator = "UUID")
-    private UUID id;
+        @Id
+        @GeneratedValue(generator = "UUID")
+        private UUID id;
 
-    @JsonIgnore
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "owner_user_id", nullable = false)
-    private User owner;
+        @JsonIgnore
+        @ToString.Exclude
+        @ManyToOne(fetch = FetchType.LAZY)
+        @JoinColumn(name = "owner_user_id", nullable = false)
+        private User owner;
 
-    @JsonIgnore
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "contact_user_id", nullable = false)
-    private User contactUser;
+        @JsonIgnore
+        @ToString.Exclude
+        @ManyToOne(fetch = FetchType.LAZY)
+        @JoinColumn(name = "contact_user_id", nullable = false)
+        private User contactUser;
 
-    @Column(name = "saved_name", length = 100)
-    private String displayName;
+        @Column(name = "saved_name", length = 100)
+        private String displayName;
 }

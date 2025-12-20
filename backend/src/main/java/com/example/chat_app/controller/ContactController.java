@@ -4,9 +4,7 @@ import com.example.chat_app.model.dto.*;
 import com.example.chat_app.model.entity.User;
 import com.example.chat_app.service.ContactService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

@@ -1,16 +1,20 @@
 package com.example.chat_app.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import org.hibernate.annotations.CreationTimestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
 @Table(name = "chat")
 @Entity
 public class Chat {
@@ -37,6 +41,8 @@ public class Chat {
     @Column(name = "deleted_at", updatable = false, nullable = true)
     private LocalDateTime deletedAt;
 
+    @JsonIgnore
+    @ToString.Exclude
     @OneToMany(mappedBy = "conversation", fetch = FetchType.LAZY)
-    private List<Call_log> CallLogs;
+    private List<Call_log> callLogs;
 }

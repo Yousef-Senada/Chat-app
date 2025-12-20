@@ -4,7 +4,6 @@ import com.example.chat_app.model.dto.AuthenticationResponse;
 import com.example.chat_app.model.dto.RegisterRequest;
 import com.example.chat_app.model.dto.LoginRequest;
 import com.example.chat_app.service.AuthService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
