@@ -1,8 +1,8 @@
 package com.example.chat_app.controller;
 
-import com.example.chat_app.model.dto.UpdateMessageRequest;
-import com.example.chat_app.model.dto.MessageDisplayDto;
-import com.example.chat_app.model.dto.SendMessageRequest;
+import com.example.chat_app.model.dto.message.UpdateMessageRequest;
+import com.example.chat_app.model.dto.message.MessageDisplayDto;
+import com.example.chat_app.model.dto.message.SendMessageRequest;
 import com.example.chat_app.model.entity.User;
 import com.example.chat_app.service.MessageService;
 import org.springframework.data.domain.Page;

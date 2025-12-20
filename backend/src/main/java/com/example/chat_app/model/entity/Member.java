@@ -1,5 +1,6 @@
 package com.example.chat_app.model.entity;
 
+import com.example.chat_app.enums.MemberRole;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -39,7 +40,7 @@ public class Member {
         private User user;
 
         @Enumerated(EnumType.STRING)
-        private Enums role;
+        private MemberRole role;
 
         @CreationTimestamp
         @Column(name = "joined_at", updatable = false, nullable = false)

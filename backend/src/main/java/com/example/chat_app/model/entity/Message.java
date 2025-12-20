@@ -1,5 +1,6 @@
 package com.example.chat_app.model.entity;
 
+import com.example.chat_app.enums.MessageType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.util.UUID;
@@ -33,7 +34,7 @@ public class Message {
     private String mediaUrl;
 
     @Enumerated(EnumType.STRING)
-    private Enums type;
+    private MessageType type;
 
     @JsonIgnore
     @ToString.Exclude

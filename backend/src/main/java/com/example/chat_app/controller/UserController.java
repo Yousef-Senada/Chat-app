@@ -1,7 +1,7 @@
 package com.example.chat_app.controller;
 
 
-import com.example.chat_app.model.dto.UserResponse;
+import com.example.chat_app.model.dto.user.UserResponse;
 import com.example.chat_app.model.entity.User;
 import com.example.chat_app.repository.UserRepository;
 import org.springframework.http.ResponseEntity;

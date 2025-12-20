@@ -1,6 +1,10 @@
 package com.example.chat_app.controller;
 
-import com.example.chat_app.model.dto.*;
+import com.example.chat_app.model.dto.contact.AddContactRequest;
+import com.example.chat_app.model.dto.contact.ContactDisplayResponse;
+import com.example.chat_app.model.dto.contact.ContactMatchResponse;
+import com.example.chat_app.model.dto.contact.SyncContactRequest;
+import com.example.chat_app.model.dto.contact.UpdateContactRequest;
 import com.example.chat_app.model.entity.User;
 import com.example.chat_app.service.ContactService;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +24,7 @@ public class ContactController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ContactDisplayResponse>> getAllContacts( @AuthenticationPrincipal User owner ) {
+    public ResponseEntity<List<ContactDisplayResponse>> getAllContacts(@AuthenticationPrincipal User owner) {
         System.out.println("=== getAllContacts called, owner: " + (owner != null ? owner.getUsername() : "NULL"));
         List<ContactDisplayResponse> contacts = contactService.getAllContacts(owner);
         return ResponseEntity.ok(contacts);
@@ -45,9 +49,10 @@ public class ContactController {
     }
 
     @PatchMapping("/update")
-    public ResponseEntity<?> updateContact(@AuthenticationPrincipal User owner , @RequestBody UpdateContactRequest request) {
-            contactService.updateContact(owner, request);
-            return ResponseEntity.ok("Contact updated successfully");
+    public ResponseEntity<?> updateContact(@AuthenticationPrincipal User owner,
+            @RequestBody UpdateContactRequest request) {
+        contactService.updateContact(owner, request);
+        return ResponseEntity.ok("Contact updated successfully");
     }
 
     @DeleteMapping("/delete/{contactUserId}")

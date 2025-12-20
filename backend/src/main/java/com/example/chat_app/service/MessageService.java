@@ -1,43 +1,49 @@
 package com.example.chat_app.service;
 
+import com.example.chat_app.events.MessageSentEvent;
 import com.example.chat_app.exceptions.AppException;
+import com.example.chat_app.enums.MemberRole;
+import com.example.chat_app.enums.MessageType;
 import com.example.chat_app.factory.MessageProcessor;
 import com.example.chat_app.factory.MessageProcessorFactory;
-import com.example.chat_app.model.dto.MessageDisplayDto;
-import com.example.chat_app.model.dto.SendMessageRequest;
-import com.example.chat_app.model.dto.SenderDto;
-import com.example.chat_app.model.dto.UpdateMessageRequest;
-import com.example.chat_app.model.entity.*;
+import com.example.chat_app.model.dto.message.MessageDisplayDto;
+import com.example.chat_app.model.dto.message.SendMessageRequest;
+import com.example.chat_app.model.dto.message.SenderDto;
+import com.example.chat_app.model.dto.message.UpdateMessageRequest;
+import com.example.chat_app.model.entity.Chat;
+import com.example.chat_app.model.entity.Message;
+import com.example.chat_app.model.entity.User;
 import com.example.chat_app.repository.ChatRepository;
 import com.example.chat_app.repository.MemberRepository;
 import com.example.chat_app.repository.MessageRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
+import com.example.chat_app.interfaces.IMessageService;
 
 @Service
-public class MessageService {
+public class MessageService implements IMessageService {
 
-    private MessageRepository messageRepo;
-    private ChatRepository chatRepo;
-    private MemberRepository memberRepo;
-    private SimpMessagingTemplate messagingTemplate;
-    private MessageProcessorFactory messageFactory;
+    private final MessageRepository messageRepo;
+    private final ChatRepository chatRepo;
+    private final MemberRepository memberRepo;
+    private final ApplicationEventPublisher eventPublisher;
+    private final MessageProcessorFactory messageFactory;
 
     public MessageService(MessageRepository messageRepo, ChatRepository chatRepo, MemberRepository memberRepo,
-            SimpMessagingTemplate messagingTemplate, MessageProcessorFactory messageFactory) {
+            ApplicationEventPublisher eventPublisher, MessageProcessorFactory messageFactory) {
         this.messageRepo = messageRepo;
         this.chatRepo = chatRepo;
         this.memberRepo = memberRepo;
-        this.messagingTemplate = messagingTemplate;
+        this.eventPublisher = eventPublisher;
         this.messageFactory = messageFactory;
     }
 
@@ -56,15 +62,22 @@ public class MessageService {
                 .build();
     }
 
+    @Override
     @Transactional
     public void sendMessage(User sender, SendMessageRequest request) {
         Chat chat = chatRepo.findById(request.chatId())
                 .orElseThrow(() -> new AppException("Chat not found.", HttpStatus.NOT_FOUND));
 
+        // Verify sender is a member of the chat
+        boolean isMember = memberRepo.findByChatIdAndUserId(chat.getId(), sender.getId()).isPresent();
+        if (!isMember) {
+            throw new AppException("User is not a member of this chat.", HttpStatus.FORBIDDEN);
+        }
+
         Message message = new Message();
         message.setSender(sender);
         message.setChat(chat);
-        message.setType(Enums.valueOf(request.messageType().toUpperCase()));
+        message.setType(MessageType.valueOf(request.messageType().toUpperCase()));
         message.setSentAt(LocalDateTime.now());
 
         MessageProcessor processor = messageFactory.getProcessor(request.messageType());
@@ -72,10 +85,12 @@ public class MessageService {
 
         Message savedMessage = messageRepo.save(message);
 
+        // Publish event - Observer pattern
         MessageDisplayDto messageDto = convertToDisplayDto(savedMessage);
-        messagingTemplate.convertAndSend("/topic/chat/" + chat.getId(), messageDto);
+        eventPublisher.publishEvent(new MessageSentEvent(chat.getId(), messageDto));
     }
 
+    @Override
     public Page<MessageDisplayDto> getMessages(UUID chatId, User requester, int page, int size) {
 
         boolean isMember = memberRepo.findByChatIdAndUserId(chatId, requester.getId()).isPresent();
@@ -91,6 +106,7 @@ public class MessageService {
         return messagePage.map(this::convertToDisplayDto);
     }
 
+    @Override
     @Transactional
     public Message editMessage(User editor, UpdateMessageRequest request) {
 
@@ -98,10 +114,10 @@ public class MessageService {
                 .orElseThrow(() -> new AppException("Message not found.", HttpStatus.NOT_FOUND));
 
         if (!message.getSender().getId().equals(editor.getId())) {
-            throw new AppException("User is not authorized to edit this message.", HttpStatus.UNAUTHORIZED);
+            throw new AppException("User is not authorized to edit this message.", HttpStatus.FORBIDDEN);
         }
 
-        if (!Enums.TEXT.equals(message.getType())) {
+        if (!MessageType.TEXT.equals(message.getType())) {
             throw new AppException("Only text messages can be edited.", HttpStatus.BAD_REQUEST);
         }
 
@@ -115,12 +131,14 @@ public class MessageService {
 
         Message updatedMessage = messageRepo.save(message);
 
+        // Publish event - Observer pattern
         MessageDisplayDto messageDto = convertToDisplayDto(updatedMessage);
-        messagingTemplate.convertAndSend("/topic/chat/" + updatedMessage.getChat().getId(), messageDto);
+        eventPublisher.publishEvent(new MessageSentEvent(updatedMessage.getChat().getId(), messageDto));
 
         return updatedMessage;
     }
 
+    @Override
     @Transactional
     public void deleteMessage(User deleter, UUID messageId) {
         Message message = messageRepo.findById(messageId)
@@ -129,18 +147,19 @@ public class MessageService {
         boolean isSender = message.getSender().getId().equals(deleter.getId());
 
         boolean isAdmin = memberRepo.findByChatIdAndUserId(message.getChat().getId(), deleter.getId())
-                .map(member -> Enums.ADMIN.equals(member.getRole()))
+                .map(member -> MemberRole.ADMIN.equals(member.getRole()))
                 .orElse(false);
 
         if (!isSender && !isAdmin) {
-            throw new AppException("User is not authorized to delete this message.", HttpStatus.UNAUTHORIZED);
+            throw new AppException("User is not authorized to delete this message.", HttpStatus.FORBIDDEN);
         }
 
         message.setDeleted(true);
 
         Message savedMessage = messageRepo.save(message);
 
+        // Publish event - Observer pattern
         MessageDisplayDto messageDto = convertToDisplayDto(savedMessage);
-        messagingTemplate.convertAndSend("/topic/chat/" + savedMessage.getChat().getId(), messageDto);
+        eventPublisher.publishEvent(new MessageSentEvent(savedMessage.getChat().getId(), messageDto));
     }
 }

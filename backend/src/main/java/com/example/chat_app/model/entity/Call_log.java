@@ -1,5 +1,7 @@
 package com.example.chat_app.model.entity;
 
+import com.example.chat_app.enums.CallStatus;
+import com.example.chat_app.enums.CallType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -33,10 +35,10 @@ public class Call_log {
     private Chat conversation;
 
     @Enumerated(EnumType.STRING)
-    private Enums call_type;
+    private CallType call_type;
 
     @Enumerated(EnumType.STRING)
-    private Enums call_status;
+    private CallStatus call_status;
 
     @CreationTimestamp
     @Column(name = "start_time", updatable = false, nullable = false)

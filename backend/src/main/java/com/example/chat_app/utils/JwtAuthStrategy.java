@@ -1,7 +1,7 @@
 package com.example.chat_app.utils;
 
-import com.example.chat_app.model.dto.AuthenticationResponse;
-import com.example.chat_app.model.dto.LoginRequest;
+import com.example.chat_app.model.dto.auth.AuthenticationResponse;
+import com.example.chat_app.model.dto.auth.LoginRequest;
 import com.example.chat_app.repository.UserRepository;
 import com.example.chat_app.service.JwtService;
 import com.example.chat_app.strategies.AuthenticationStrategy;

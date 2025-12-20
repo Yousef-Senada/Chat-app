@@ -14,14 +14,14 @@ import java.util.UUID;
 @Repository
 public interface ContactRepository extends JpaRepository<Contact, UUID> {
 
-    Optional<Contact> findByOwnerAndContactUser(User owner, User contactUser);
+        Optional<Contact> findByOwnerAndContactUser(User owner, User contactUser);
 
-    /**
-     * Fetch all contacts for an owner with contactUser data pre-loaded.
-     * DISTINCT prevents duplicate rows from JOIN FETCH.
-     */
-    @Query("SELECT DISTINCT c FROM Contact c " +
-            "JOIN FETCH c.contactUser " +
-            "WHERE c.owner = :owner")
-    List<Contact> findAllByOwner(@Param("owner") User owner);
+        /**
+         * Fetch all contacts for an owner with contactUser data pre-loaded.
+         * DISTINCT prevents duplicate rows from JOIN FETCH.
+         */
+        @Query("SELECT DISTINCT c FROM Contact c " +
+                        "JOIN FETCH c.contactUser " +
+                        "WHERE c.owner = :owner")
+        List<Contact> findAllByOwner(@Param("owner") User owner);
 }

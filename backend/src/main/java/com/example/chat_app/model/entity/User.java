@@ -32,7 +32,7 @@ public class User implements UserDetails {
     @Column(name = "user_name", unique = true, nullable = false)
     private String username;
 
-    @Column(name = "phone_name")
+    @Column(name = "phone_number", unique = true)
     private String phoneNumber;
 
     private String name;
@@ -45,7 +45,6 @@ public class User implements UserDetails {
     @CreationTimestamp
     @Column(name = "created_at", updatable = false, nullable = false)
     private LocalDateTime createdAt;
-
 
     @JsonIgnore
     @ToString.Exclude

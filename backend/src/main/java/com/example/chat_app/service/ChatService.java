@@ -5,36 +5,45 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import com.example.chat_app.events.*;
 import com.example.chat_app.exceptions.AppException;
-import com.example.chat_app.model.dto.*;
 
+import com.example.chat_app.enums.ChatType;
+import com.example.chat_app.enums.MemberRole;
+import com.example.chat_app.model.dto.chat.ChatDisplayDto;
+import com.example.chat_app.model.dto.chat.CreateChatRequest;
+import com.example.chat_app.model.dto.chat.UpdateGroupPropertiesRequest;
+import com.example.chat_app.model.dto.member.MemberDisplayDto;
+import com.example.chat_app.model.dto.member.MemberUpdateDto;
+import com.example.chat_app.model.dto.member.UpdateMemberRoleRequest;
+import com.example.chat_app.model.dto.member.UpdateMembershipRequest;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.example.chat_app.model.entity.Chat;
-import com.example.chat_app.model.entity.Enums;
 import com.example.chat_app.model.entity.Member;
 import com.example.chat_app.model.entity.User;
 import com.example.chat_app.repository.ChatRepository;
 import com.example.chat_app.repository.UserRepository;
 import com.example.chat_app.repository.MemberRepository;
+import com.example.chat_app.interfaces.IChatService;
 
 @Service
-public class ChatService {
-    private ChatRepository chatRepo;
-    private UserRepository userRepo;
-    private MemberRepository memberRepo;
-    private SimpMessagingTemplate messagingTemplate;
+public class ChatService implements IChatService {
+    private final ChatRepository chatRepo;
+    private final UserRepository userRepo;
+    private final MemberRepository memberRepo;
+    private final ApplicationEventPublisher eventPublisher;
 
     public ChatService(ChatRepository chatRepo, UserRepository userRepo, MemberRepository memberRepo,
-            SimpMessagingTemplate messagingTemplate) {
+            ApplicationEventPublisher eventPublisher) {
         this.chatRepo = chatRepo;
         this.userRepo = userRepo;
         this.memberRepo = memberRepo;
-        this.messagingTemplate = messagingTemplate;
+        this.eventPublisher = eventPublisher;
     }
 
     private MemberDisplayDto convertToMemberDisplayDto(Member member) {
@@ -58,6 +67,7 @@ public class ChatService {
                 memberDtos);
     }
 
+    @Override
     @Transactional
     @CacheEvict(value = "userChats", key = "#owner.id")
     public ChatDisplayDto createChat(User owner, CreateChatRequest request) {
@@ -89,7 +99,7 @@ public class ChatService {
         }
 
         Chat newChat = new Chat();
-        Enums type = Enums.valueOf(request.chatType().toUpperCase());
+        ChatType type = ChatType.valueOf(request.chatType().toUpperCase());
         newChat.setChatType(type);
         newChat.setGroupName(request.groupName());
         newChat.setGroupImage(request.groupImage());
@@ -102,9 +112,9 @@ public class ChatService {
                     member.setUser(user);
 
                     if (user.getId().equals(owner.getId())) {
-                        member.setRole(Enums.ADMIN);
+                        member.setRole(MemberRole.ADMIN);
                     } else {
-                        member.setRole(Enums.MEMBER);
+                        member.setRole(MemberRole.MEMBER);
                     }
                     return member;
                 })
@@ -114,12 +124,11 @@ public class ChatService {
 
         ChatDisplayDto chatDto = convertToDisplayDto(savedChat, members);
 
-        usersToAdd.forEach(user -> {
-            messagingTemplate.convertAndSendToUser(
-                    user.getUsername(),
-                    "/queue/newChat",
-                    chatDto);
-        });
+        // Publish event - Observer pattern
+        List<String> usernames = usersToAdd.stream()
+                .map(User::getUsername)
+                .collect(Collectors.toList());
+        eventPublisher.publishEvent(new ChatCreatedEvent(chatDto, usernames));
 
         return chatDto;
     }
@@ -128,6 +137,7 @@ public class ChatService {
      * Get all chats for a user - CACHED for 10 minutes.
      * Cache is invalidated when user creates/joins/leaves a chat.
      */
+    @Override
     @Cacheable(value = "userChats", key = "#owner.id")
     public List<ChatDisplayDto> getUserChats(User owner) {
         List<Member> userMemberships = memberRepo.findAllByUserWithChat(owner);
@@ -158,6 +168,7 @@ public class ChatService {
      * Get all members of a chat - CACHED for 10 minutes.
      * Cache is invalidated when members are added/removed.
      */
+    @Override
     @Cacheable(value = "chatMembers", key = "#chatId")
     public List<MemberDisplayDto> getChatMembers(UUID chatId, User requester) {
 
@@ -177,14 +188,15 @@ public class ChatService {
         Member member = memberRepo.findByChatIdAndUserId(chatId, user.getId())
                 .orElseThrow(() -> new AppException("User is not a member of the chat", HttpStatus.FORBIDDEN));
 
-        Enums role = member.getRole();
+        MemberRole role = member.getRole();
 
-        if (!Enums.ADMIN.equals(role)) {
+        if (!MemberRole.ADMIN.equals(role)) {
             throw new AppException("User does not have administrative privileges for this group.",
                     HttpStatus.FORBIDDEN);
         }
     }
 
+    @Override
     @Transactional
     @CacheEvict(value = "chatMembers", key = "#request.chatId()")
     public ChatDisplayDto addMember(User owner, UpdateMembershipRequest request) {
@@ -210,7 +222,7 @@ public class ChatService {
                     Member member = new Member();
                     member.setChat(chat);
                     member.setUser(user);
-                    member.setRole(Enums.MEMBER);
+                    member.setRole(MemberRole.MEMBER);
                     return member;
                 })
                 .collect(Collectors.toList());
@@ -226,12 +238,14 @@ public class ChatService {
                 addedMembersDto,
                 "MEMBER_ADDED");
 
-        messagingTemplate.convertAndSend("/topic/chat/" + chat.getId() + "/members", updateDto);
+        // Publish event - Observer pattern
+        eventPublisher.publishEvent(new MemberUpdatedEvent(chat.getId(), updateDto));
 
         List<Member> allMembers = memberRepo.findAllByChatId(chat.getId());
         return convertToDisplayDto(chat, allMembers);
     }
 
+    @Override
     @Transactional
     public ChatDisplayDto updateGroupProperties(User owner, UpdateGroupPropertiesRequest request) {
 
@@ -253,11 +267,13 @@ public class ChatService {
         List<Member> members = memberRepo.findAllByChatId(savedChat.getId());
         ChatDisplayDto chatDto = convertToDisplayDto(savedChat, members);
 
-        messagingTemplate.convertAndSend("/topic/chat/" + savedChat.getId() + "/updates", chatDto);
+        // Publish event - Observer pattern
+        eventPublisher.publishEvent(new ChatUpdatedEvent(savedChat.getId(), chatDto));
 
         return chatDto;
     }
 
+    @Override
     @Transactional
     public MemberDisplayDto updateMemberRole(User owner, UpdateMemberRoleRequest request) {
 
@@ -266,7 +282,7 @@ public class ChatService {
         Member targetMember = memberRepo.findByChatIdAndUserId(request.chatId(), request.targetUserId())
                 .orElseThrow(() -> new AppException("Target user is not a member of this chat.", HttpStatus.FORBIDDEN));
 
-        if (Enums.ADMIN.equals(targetMember.getRole()) && !owner.getId().equals(targetMember.getUser().getId())) {
+        if (MemberRole.ADMIN.equals(targetMember.getRole()) && !owner.getId().equals(targetMember.getUser().getId())) {
             throw new AppException("Cannot modify the role of an existing group ADMIN.", HttpStatus.FORBIDDEN);
         }
 
@@ -276,7 +292,7 @@ public class ChatService {
             throw new AppException("Invalid role provided. Role must be ADMIN or MEMBER.", HttpStatus.BAD_REQUEST);
         }
 
-        Enums newRoleEnum = Enums.valueOf(newRoleUpper);
+        MemberRole newRoleEnum = MemberRole.valueOf(newRoleUpper);
         targetMember.setRole(newRoleEnum);
 
         Member updatedMember = memberRepo.save(targetMember);
@@ -288,7 +304,8 @@ public class ChatService {
                 List.of(memberDto),
                 "ROLE_UPDATED");
 
-        messagingTemplate.convertAndSend("/topic/chat/" + request.chatId() + "/members", updateDto);
+        // Publish event - Observer pattern
+        eventPublisher.publishEvent(new MemberUpdatedEvent(request.chatId(), updateDto));
 
         return memberDto;
 
@@ -300,6 +317,7 @@ public class ChatService {
      * Before: N queries in loop for admin check + M queries for user lookups
      * After: 1 query to get members (with user data pre-loaded)
      */
+    @Override
     @CacheEvict(value = "chatMembers", key = "#request.chatId()")
     public void deleteMember(User owner, UpdateMembershipRequest request) {
         // Use optimized query that fetches user data along with members
@@ -311,13 +329,14 @@ public class ChatService {
 
         // Check owner's admin status ONCE before the loop (not inside!)
         boolean isAdmin = memberRepo.findByChatIdAndUserId(request.chatId(), owner.getId())
-                .map(m -> Enums.ADMIN.equals(m.getRole()))
+                .map(m -> MemberRole.ADMIN.equals(m.getRole()))
                 .orElse(false);
 
         // Validate all members can be removed (no DB queries in this loop now!)
         for (Member targetMember : membersToRemove) {
             // Prevent admin from removing themselves
-            if (targetMember.getUser().getId().equals(owner.getId()) && Enums.ADMIN.equals(targetMember.getRole())) {
+            if (targetMember.getUser().getId().equals(owner.getId())
+                    && MemberRole.ADMIN.equals(targetMember.getRole())) {
                 throw new AppException("Group owner cannot remove themselves using this function.",
                         HttpStatus.FORBIDDEN);
             }
@@ -334,14 +353,10 @@ public class ChatService {
         // Delete all members
         memberRepo.deleteAll(membersToRemove);
 
-        // Send notifications using already-loaded user data (no additional queries!)
+        // Publish events - Observer pattern
         membersToRemove.forEach(member -> {
-            // User data is already loaded from the initial query
             String username = member.getUser().getUsername();
-            messagingTemplate.convertAndSendToUser(
-                    username,
-                    "/queue/chatRemoved",
-                    request.chatId());
+            eventPublisher.publishEvent(new ChatRemovedEvent(request.chatId(), username));
         });
 
         MemberUpdateDto updateDto = new MemberUpdateDto(
@@ -349,6 +364,6 @@ public class ChatService {
                 null,
                 "MEMBER_REMOVED");
 
-        messagingTemplate.convertAndSend("/topic/chat/" + request.chatId() + "/members", updateDto);
+        eventPublisher.publishEvent(new MemberUpdatedEvent(request.chatId(), updateDto));
     }
 }

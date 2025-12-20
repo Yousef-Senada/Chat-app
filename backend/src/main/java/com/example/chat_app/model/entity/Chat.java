@@ -1,5 +1,6 @@
 package com.example.chat_app.model.entity;
 
+import com.example.chat_app.enums.ChatType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -23,7 +24,7 @@ public class Chat {
     private UUID id;
 
     @Enumerated(EnumType.STRING)
-    private Enums chatType;
+    private ChatType chatType;
 
     @Column(name = "group_name", length = 100, nullable = true)
     private String groupName;
