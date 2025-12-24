@@ -1,0 +1,131 @@
+/*
+ * Application CSS - Backward Compatibility
+ * Main styles are in styles/styles.css
+ * This file imports/duplicates key styles for legacy support
+ */
+
+/* Import main styles if supported */
+@import url("styles/styles.css");
+
+/* Base Styles (fallback) */
+.root {
+    -fx-font-family: "Segoe UI", "SF Pro Display", system-ui, sans-serif;
+    -fx-font-size: 14px;
+    -fx-background-color: #F7F7F9;
+}
+
+/* Buttons */
+.button {
+    -fx-background-color: #8B5CF6;
+    -fx-text-fill: white;
+    -fx-background-radius: 8;
+    -fx-padding: 12 24;
+    -fx-font-size: 14px;
+    -fx-cursor: hand;
+}
+
+.button:hover {
+    -fx-background-color: #7C3AED;
+}
+
+.button-secondary {
+    -fx-background-color: #FFFFFF;
+    -fx-text-fill: #374151;
+    -fx-border-color: #E5E7EB;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+}
+
+.button-danger {
+    -fx-background-color: #EF4444;
+}
+
+.button-success {
+    -fx-background-color: #22C55E;
+}
+
+/* Text Fields */
+.text-field, .password-field, .text-area {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #E5E7EB;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-padding: 12 16;
+}
+
+.text-field:focused, .password-field:focused {
+    -fx-border-color: #8B5CF6;
+}
+
+/* Sidebar */
+.sidebar {
+    -fx-background-color: #FFFFFF;
+}
+
+.sidebar-icon {
+    -fx-background-color: transparent;
+    -fx-background-radius: 8;
+    -fx-cursor: hand;
+}
+
+.sidebar-icon:hover {
+    -fx-background-color: #F3F4F6;
+}
+
+.sidebar-icon-active {
+    -fx-background-color: #8B5CF6;
+    -fx-background-radius: 8;
+}
+
+/* Panels */
+.panel {
+    -fx-background-color: #FFFFFF;
+}
+
+.panel-header {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #E5E7EB;
+    -fx-border-width: 0 0 1 0;
+}
+
+/* Chat styles */
+.chat-area {
+    -fx-background-color: #F7F7F9;
+}
+
+.chat-list-item {
+    -fx-background-color: transparent;
+    -fx-cursor: hand;
+}
+
+.chat-list-item:hover {
+    -fx-background-color: #F9FAFB;
+}
+
+/* Cards */
+.card {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 12;
+    -fx-padding: 16;
+}
+
+/* Scroll Pane */
+.scroll-pane {
+    -fx-background-color: transparent;
+}
+
+.scroll-pane > .viewport {
+    -fx-background-color: transparent;
+}
+
+/* Labels */
+.label-title {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+}
+
+.label-subtitle {
+    -fx-font-size: 16px;
+    -fx-text-fill: #6B7280;
+}
+

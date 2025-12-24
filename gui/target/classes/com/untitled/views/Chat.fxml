@@ -1,0 +1,414 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.shape.SVGPath?>
+
+<AnchorPane prefHeight="900.0" prefWidth="1200.0" styleClass="root" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.untitled.controllers.ChatController">
+    
+    <VBox prefWidth="70.0" alignment="CENTER" styleClass="sidebar" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <padding>
+            <Insets top="20.0" bottom="20.0"/>
+        </padding>
+        
+        <VBox alignment="CENTER" styleClass="sidebar-icon" onMouseClicked="#onBackClick" style="-fx-cursor: hand;">
+            <ImageView fitHeight="22.0" fitWidth="22.0" preserveRatio="true">
+                <image>
+                    <Image url="@../images/menu.png"/>
+                </image>
+            </ImageView>
+        </VBox>
+        
+        <VBox alignment="CENTER" styleClass="sidebar-icon-active" style="-fx-cursor: hand;">
+            <VBox.margin>
+                <Insets top="16.0"/>
+            </VBox.margin>
+            <Label text="💬" style="-fx-font-size: 18px;"/>
+        </VBox>
+        
+        <VBox alignment="CENTER" styleClass="sidebar-icon" onMouseClicked="#onContactsClick" style="-fx-cursor: hand;">
+            <VBox.margin>
+                <Insets top="12.0"/>
+            </VBox.margin>
+            <Label text="👥" style="-fx-font-size: 18px; -fx-text-fill: #6B7280;"/>
+        </VBox>
+        
+        <VBox alignment="CENTER" styleClass="sidebar-icon" onMouseClicked="#onSettingsClick" style="-fx-cursor: hand;">
+            <VBox.margin>
+                <Insets top="12.0"/>
+            </VBox.margin>
+            <ImageView fitHeight="22.0" fitWidth="22.0" preserveRatio="true">
+                <image>
+                    <Image url="@../images/Settings.png"/>
+                </image>
+            </ImageView>
+        </VBox>
+        
+        <Region VBox.vgrow="ALWAYS"/>
+        
+        <VBox alignment="CENTER" styleClass="sidebar-icon" onMouseClicked="#onLogoutClick" style="-fx-cursor: hand;">
+            <Label text="⏻" style="-fx-font-size: 18px; -fx-text-fill: #6B7280;"/>
+        </VBox>
+    </VBox>
+    
+    <VBox styleClass="chat-area" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="70.0" AnchorPane.rightAnchor="320.0" AnchorPane.topAnchor="0.0">
+        
+        <HBox alignment="CENTER_LEFT" prefHeight="70.0" styleClass="panel-header" style="-fx-background-color: white;">
+            <padding>
+                <Insets left="20.0" right="20.0"/>
+            </padding>
+            
+            <VBox alignment="CENTER" prefWidth="40.0" onMouseClicked="#onBackClick" style="-fx-cursor: hand;">
+                <Label text="←" style="-fx-font-size: 24px; -fx-text-fill: #6B7280;"/>
+            </VBox>
+            
+            <StackPane>
+                <HBox.margin>
+                    <Insets left="10.0"/>
+                </HBox.margin>
+                <Circle fx:id="chatAvatar" radius="22.0" fill="#3B82F6"/>
+                <Label fx:id="avatarInitials" text="LH" textFill="white" style="-fx-font-weight: bold;"/>
+                <Circle fx:id="onlineIndicator" radius="6.0" fill="#22C55E" stroke="white" strokeWidth="2.0" StackPane.alignment="BOTTOM_RIGHT"/>
+            </StackPane>
+            
+            <VBox>
+                <HBox.margin>
+                    <Insets left="12.0"/>
+                </HBox.margin>
+                <Label fx:id="chatNameLabel" text="Liza Horner" style="-fx-font-weight: bold;">
+                    <font>
+                        <Font size="16.0"/>
+                    </font>
+                </Label>
+                <Label fx:id="chatStatusLabel" text="Active" textFill="#22C55E">
+                    <font>
+                        <Font size="12.0"/>
+                    </font>
+                </Label>
+            </VBox>
+            
+            <Region HBox.hgrow="ALWAYS"/>
+            
+            <HBox spacing="16.0">
+                <VBox alignment="CENTER" style="-fx-cursor: hand;">
+                    <ImageView fitHeight="20.0" fitWidth="20.0" preserveRatio="true">
+                        <image>
+                            <Image url="@../images/Phone.png"/>
+                        </image>
+                    </ImageView>
+                </VBox>
+                <VBox alignment="CENTER" style="-fx-cursor: hand;">
+                    <ImageView fitHeight="20.0" fitWidth="20.0" preserveRatio="true">
+                        <image>
+                            <Image url="@../images/cam.png"/>
+                        </image>
+                    </ImageView>
+                </VBox>
+                <VBox alignment="CENTER" style="-fx-cursor: hand;">
+                    <ImageView fitHeight="20.0" fitWidth="20.0" preserveRatio="true">
+                        <image>
+                            <Image url="@../images/Bell.png"/>
+                        </image>
+                    </ImageView>
+                </VBox>
+                <VBox alignment="CENTER" style="-fx-cursor: hand;">
+                    <ImageView fitHeight="20.0" fitWidth="20.0" preserveRatio="true">
+                        <image>
+                            <Image url="@../images/Dots.png"/>
+                        </image>
+                    </ImageView>
+                </VBox>
+            </HBox>
+        </HBox>
+        
+        <ScrollPane fx:id="messagesScrollPane" fitToWidth="true" styleClass="scroll-pane" VBox.vgrow="ALWAYS" style="-fx-background-color: #F7F7F9;">
+            <VBox fx:id="messagesContainer" spacing="8.0" style="-fx-background-color: #F7F7F9;">
+                <padding>
+                    <Insets top="20.0" right="20.0" bottom="20.0" left="20.0"/>
+                </padding>
+                </VBox>
+        </ScrollPane>
+        
+        <HBox fx:id="typingIndicator" alignment="CENTER_LEFT" prefHeight="30.0" style="-fx-background-color: #F7F7F9;" visible="false" managed="false">
+            <padding>
+                <Insets left="20.0"/>
+            </padding>
+            <Circle radius="3.0" fill="#6B7280"/>
+            <Circle radius="3.0" fill="#6B7280">
+                <HBox.margin>
+                    <Insets left="4.0"/>
+                </HBox.margin>
+            </Circle>
+            <Circle radius="3.0" fill="#6B7280">
+                <HBox.margin>
+                    <Insets left="4.0"/>
+                </HBox.margin>
+            </Circle>
+            <Label fx:id="typingLabel" text="Liza is typing" textFill="#6B7280">
+                <HBox.margin>
+                    <Insets left="8.0"/>
+                </HBox.margin>
+                <font>
+                    <Font size="12.0"/>
+                </font>
+            </Label>
+        </HBox>
+        
+        <HBox alignment="CENTER" prefHeight="80.0" spacing="12.0" styleClass="message-input-container">
+            <padding>
+                <Insets left="20.0" right="20.0"/>
+            </padding>
+            
+            <StackPane>
+                <VBox fx:id="attachmentPopup" alignment="CENTER" spacing="8.0" visible="false" managed="false"
+                      style="-fx-background-color: white; -fx-background-radius: 12; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 10, 0, 0, 4); -fx-padding: 12;"
+                      StackPane.alignment="TOP_CENTER" translateY="-170.0">
+                    
+                    <HBox alignment="CENTER_LEFT" spacing="12.0" prefWidth="180.0" prefHeight="44.0" 
+                          style="-fx-background-color: #F3F4F6; -fx-background-radius: 8; -fx-padding: 8 12 8 12; -fx-cursor: hand;"
+                          onMouseClicked="#onSendImage">
+                        <VBox alignment="CENTER" prefWidth="28.0" prefHeight="28.0" style="-fx-background-color: #DBEAFE; -fx-background-radius: 6;">
+                            <Label text="🖼" style="-fx-font-size: 14px;"/>
+                        </VBox>
+                        <Label text="Image" style="-fx-font-size: 14px; -fx-font-weight: bold;"/>
+                    </HBox>
+                    
+                    <HBox alignment="CENTER_LEFT" spacing="12.0" prefWidth="180.0" prefHeight="44.0" 
+                          style="-fx-background-color: #F3F4F6; -fx-background-radius: 8; -fx-padding: 8 12 8 12; -fx-cursor: hand;"
+                          onMouseClicked="#onSendVideo">
+                        <VBox alignment="CENTER" prefWidth="28.0" prefHeight="28.0" style="-fx-background-color: #FEE2E2; -fx-background-radius: 6;">
+                            <Label text="🎬" style="-fx-font-size: 14px;"/>
+                        </VBox>
+                        <Label text="Video" style="-fx-font-size: 14px; -fx-font-weight: bold;"/>
+                    </HBox>
+                    
+                    <HBox alignment="CENTER_LEFT" spacing="12.0" prefWidth="180.0" prefHeight="44.0" 
+                          style="-fx-background-color: #F3F4F6; -fx-background-radius: 8; -fx-padding: 8 12 8 12; -fx-cursor: hand;"
+                          onMouseClicked="#onSendFile">
+                        <VBox alignment="CENTER" prefWidth="28.0" prefHeight="28.0" style="-fx-background-color: #DCFCE7; -fx-background-radius: 6;">
+                            <Label text="📄" style="-fx-font-size: 14px;"/>
+                        </VBox>
+                        <Label text="File" style="-fx-font-size: 14px; -fx-font-weight: bold;"/>
+                    </HBox>
+                </VBox>
+                
+                <VBox fx:id="attachmentButton" alignment="CENTER" style="-fx-cursor: hand;" onMouseClicked="#onAttachmentClick">
+                    <ImageView fitHeight="20.0" fitWidth="20.0" preserveRatio="true">
+                        <image>
+                            <Image url="@../images/Pin.png"/>
+                        </image>
+                    </ImageView>
+                </VBox>
+            </StackPane>
+            
+            <TextField fx:id="messageInput" promptText="Type a message..." styleClass="message-input" HBox.hgrow="ALWAYS" onAction="#onSendMessage">
+                <font>
+                    <Font size="14.0"/>
+                </font>
+            </TextField>
+            
+            <VBox alignment="CENTER" style="-fx-cursor: hand;">
+                <ImageView fitHeight="20.0" fitWidth="20.0" preserveRatio="true">
+                    <image>
+                        <Image url="@../images/Smiley.png"/>
+                    </image>
+                </ImageView>
+            </VBox>
+            
+            <Button fx:id="sendButton" styleClass="send-button" onAction="#onSendMessage">
+                <graphic>
+                    <HBox alignment="CENTER" spacing="6.0">
+                        <Label text="Send" textFill="white">
+                            <font>
+                                <Font size="14.0"/>
+                            </font>
+                        </Label>
+                        <ImageView fitHeight="16.0" fitWidth="16.0" preserveRatio="true">
+                            <image>
+                                <Image url="@../images/Right.png"/>
+                            </image>
+                        </ImageView>
+                    </HBox>
+                </graphic>
+            </Button>
+        </HBox>
+    </VBox>
+    
+    <VBox prefWidth="320.0" styleClass="panel" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        
+        <VBox alignment="CENTER" spacing="16.0">
+            <padding>
+                <Insets top="40.0" bottom="20.0"/>
+            </padding>
+            
+            <Circle fx:id="profileAvatar" radius="50.0" fill="#3B82F6"/>
+            
+            <Label fx:id="profileNameLabel" text="Liza Horner" style="-fx-font-weight: bold;">
+                <font>
+                    <Font size="18.0"/>
+                </font>
+            </Label>
+            
+            <HBox alignment="CENTER" spacing="16.0">
+                <VBox alignment="CENTER" style="-fx-cursor: hand; -fx-background-color: #F3E8FF; -fx-background-radius: 50; -fx-padding: 12;">
+                    <ImageView fitHeight="20.0" fitWidth="20.0" preserveRatio="true">
+                        <image>
+                            <Image url="@../images/Phone.png"/>
+                        </image>
+                    </ImageView>
+                </VBox>
+                <VBox alignment="CENTER" style="-fx-cursor: hand; -fx-background-color: #DCFCE7; -fx-background-radius: 50; -fx-padding: 12;">
+                    <ImageView fitHeight="20.0" fitWidth="20.0" preserveRatio="true">
+                        <image>
+                            <Image url="@../images/mail.png"/>
+                        </image>
+                    </ImageView>
+                </VBox>
+                <VBox alignment="CENTER" style="-fx-cursor: hand; -fx-background-color: #FEF9C3; -fx-background-radius: 50; -fx-padding: 12;">
+                    <ImageView fitHeight="20.0" fitWidth="20.0" preserveRatio="true">
+                        <image>
+                            <Image url="@../images/cam.png"/>
+                        </image>
+                    </ImageView>
+                </VBox>
+            </HBox>
+        </VBox>
+        
+        <!-- Group Members Section (visible only for groups) -->
+        <VBox fx:id="groupMembersSection" spacing="12.0" visible="false" managed="false">
+            <padding>
+                <Insets top="10.0" left="20.0" right="20.0"/>
+            </padding>
+            
+            <HBox alignment="CENTER_LEFT">
+                <Label text="Group Members" style="-fx-font-weight: bold;">
+                    <font>
+                        <Font size="16.0"/>
+                    </font>
+                </Label>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label fx:id="memberCountLabel" text="0 members" textFill="#6B7280">
+                    <font>
+                        <Font size="12.0"/>
+                    </font>
+                </Label>
+            </HBox>
+            
+            <!-- Add Member Form (hidden by default) -->
+            <VBox fx:id="addMemberForm" spacing="8.0" visible="false" managed="false" style="-fx-background-color: #F9FAFB; -fx-padding: 12; -fx-background-radius: 8;">
+                <Label text="Add Member by User ID" textFill="#374151">
+                    <font>
+                        <Font size="12.0"/>
+                    </font>
+                </Label>
+                <TextField fx:id="memberIdField" promptText="Enter user ID" prefHeight="36.0" style="-fx-background-color: white; -fx-background-radius: 6; -fx-border-color: #E5E7EB; -fx-border-radius: 6;">
+                    <font>
+                        <Font size="12.0"/>
+                    </font>
+                </TextField>
+                <HBox spacing="8.0" alignment="CENTER_RIGHT">
+                    <Button text="Cancel" onAction="#onCancelAddMember" style="-fx-background-color: #E5E7EB; -fx-text-fill: #374151; -fx-background-radius: 6; -fx-padding: 6 12; -fx-cursor: hand;">
+                        <font>
+                            <Font size="11.0"/>
+                        </font>
+                    </Button>
+                    <Button text="Add" onAction="#onConfirmAddMember" style="-fx-background-color: #22C55E; -fx-text-fill: white; -fx-background-radius: 6; -fx-padding: 6 12; -fx-cursor: hand;">
+                        <font>
+                            <Font size="11.0"/>
+                        </font>
+                    </Button>
+                </HBox>
+            </VBox>
+            
+            <Button fx:id="addMemberBtn" text="+ Add Member" onAction="#onAddMemberClick" prefWidth="280.0" style="-fx-background-color: #8B5CF6; -fx-text-fill: white; -fx-background-radius: 8; -fx-padding: 8 16; -fx-cursor: hand;">
+                <font>
+                    <Font size="12.0"/>
+                </font>
+            </Button>
+            
+            <ScrollPane fitToWidth="true" prefHeight="200.0" style="-fx-background-color: transparent;">
+                <VBox fx:id="membersListContainer" spacing="6.0">
+                    <!-- Members will be added dynamically -->
+                </VBox>
+            </ScrollPane>
+            
+            <Button fx:id="leaveChatBtn" text="Leave Group" onAction="#onLeaveGroupClick" prefWidth="280.0" style="-fx-background-color: #EF4444; -fx-text-fill: white; -fx-background-radius: 8; -fx-padding: 8 16; -fx-cursor: hand;">
+                <font>
+                    <Font size="12.0"/>
+                </font>
+            </Button>
+        </VBox>
+        
+        <VBox spacing="12.0">
+            <padding>
+                <Insets top="20.0" left="20.0" right="20.0"/>
+            </padding>
+            
+            <Label text="Shared Files" style="-fx-font-weight: bold;">
+                <font>
+                    <Font size="16.0"/>
+                </font>
+            </Label>
+            
+            <HBox alignment="CENTER_LEFT" spacing="12.0" style="-fx-background-color: #F3F4F6; -fx-background-radius: 8; -fx-padding: 12;">
+                <VBox alignment="CENTER" prefWidth="32.0" prefHeight="32.0" style="-fx-background-color: #E5E7EB; -fx-background-radius: 6;">
+                    <ImageView fitHeight="16.0" fitWidth="16.0" preserveRatio="true">
+                        <image>
+                            <Image url="@../images/File.png"/>
+                        </image>
+                    </ImageView>
+                </VBox>
+                <VBox HBox.hgrow="ALWAYS">
+                    <Label text="Resume Template.pdf">
+                        <font>
+                            <Font size="13.0"/>
+                        </font>
+                    </Label>
+                    <Label text="2.2MB" textFill="#6B7280">
+                        <font>
+                            <Font size="11.0"/>
+                        </font>
+                    </Label>
+                </VBox>
+            </HBox>
+            
+            <HBox alignment="CENTER_LEFT" spacing="12.0" style="-fx-background-color: #F3F4F6; -fx-background-radius: 8; -fx-padding: 12;">
+                <VBox alignment="CENTER" prefWidth="32.0" prefHeight="32.0" style="-fx-background-color: #E5E7EB; -fx-background-radius: 6;">
+                    <ImageView fitHeight="16.0" fitWidth="16.0" preserveRatio="true">
+                        <image>
+                            <Image url="@../images/File.png"/>
+                        </image>
+                    </ImageView>
+                </VBox>
+                <VBox HBox.hgrow="ALWAYS">
+                    <Label text="Project Brief.docx">
+                        <font>
+                            <Font size="13.0"/>
+                        </font>
+                    </Label>
+                    <Label text="1.5MB" textFill="#6B7280">
+                        <font>
+                            <Font size="11.0"/>
+                        </font>
+                    </Label>
+                </VBox>
+            </HBox>
+        </VBox>
+        
+        <Region VBox.vgrow="ALWAYS"/>
+    </VBox>
+
+</AnchorPane>
+

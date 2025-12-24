@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.ProgressIndicator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="850.0" prefWidth="900.0" style="-fx-background-color: linear-gradient(to bottom right, #F3E8FF, #FFFFFF);" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.untitled.controllers.RegisterController">
+    
+    <VBox alignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        
+        <VBox maxWidth="450.0" spacing="20.0" style="-fx-background-color: white; -fx-background-radius: 16; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 20, 0, 0, 4);">
+            <padding>
+                <Insets top="36.0" right="48.0" bottom="36.0" left="48.0"/>
+            </padding>
+            
+            <VBox spacing="8.0">
+                <Label text="💬" style="-fx-font-size: 40px;">
+                    <VBox.margin>
+                        <Insets bottom="8.0"/>
+                    </VBox.margin>
+                </Label>
+                <Label text="Create Account" styleClass="auth-title">
+                    <font>
+                        <Font name="System Bold" size="32.0"/>
+                    </font>
+                </Label>
+                <HBox spacing="4.0">
+                    <Label text="Already have an account?" textFill="#6B7280">
+                        <font>
+                            <Font size="14.0"/>
+                        </font>
+                    </Label>
+                    <Label fx:id="loginLink" text="Sign in" textFill="#8B5CF6" underline="true" onMouseClicked="#onLoginLinkClick" style="-fx-cursor: hand;">
+                        <font>
+                            <Font name="System Bold" size="14.0"/>
+                        </font>
+                    </Label>
+                </HBox>
+            </VBox>
+            
+            <!-- Error Message -->
+            <Label fx:id="errorLabel" textFill="#EF4444" wrapText="true" visible="false" managed="false">
+                <font>
+                    <Font size="14.0"/>
+                </font>
+            </Label>
+            
+            <VBox spacing="14.0">
+                <VBox.margin>
+                    <Insets top="4.0"/>
+                </VBox.margin>
+                
+                <!-- Full Name Field -->
+                <VBox spacing="6.0">
+                    <HBox>
+                        <Label text="Full Name" textFill="#374151">
+                            <font>
+                                <Font size="14.0"/>
+                            </font>
+                        </Label>
+                        <Label text=" *" textFill="#EF4444">
+                            <font>
+                                <Font size="14.0"/>
+                            </font>
+                        </Label>
+                    </HBox>
+                    <TextField fx:id="nameField" promptText="Enter your full name" prefHeight="45.0">
+                        <font>
+                            <Font size="14.0"/>
+                        </font>
+                    </TextField>
+                </VBox>
+                
+                <!-- Username Field -->
+                <VBox spacing="6.0">
+                    <HBox>
+                        <Label text="Username" textFill="#374151">
+                            <font>
+                                <Font size="14.0"/>
+                            </font>
+                        </Label>
+                        <Label text=" *" textFill="#EF4444">
+                            <font>
+                                <Font size="14.0"/>
+                            </font>
+                        </Label>
+                    </HBox>
+                    <TextField fx:id="usernameField" promptText="Choose a username" prefHeight="45.0">
+                        <font>
+                            <Font size="14.0"/>
+                        </font>
+                    </TextField>
+                </VBox>
+                
+                <!-- Phone Number Field -->
+                <VBox spacing="6.0">
+                    <HBox>
+                        <Label text="Phone Number" textFill="#374151">
+                            <font>
+                                <Font size="14.0"/>
+                            </font>
+                        </Label>
+                        <Label text=" *" textFill="#EF4444">
+                            <font>
+                                <Font size="14.0"/>
+                            </font>
+                        </Label>
+                    </HBox>
+                    <TextField fx:id="phoneField" promptText="+1234567890" prefHeight="45.0">
+                        <font>
+                            <Font size="14.0"/>
+                        </font>
+                    </TextField>
+                </VBox>
+                
+                <!-- Password Field -->
+                <VBox spacing="6.0">
+                    <HBox>
+                        <Label text="Password" textFill="#374151">
+                            <font>
+                                <Font size="14.0"/>
+                            </font>
+                        </Label>
+                        <Label text=" *" textFill="#EF4444">
+                            <font>
+                                <Font size="14.0"/>
+                            </font>
+                        </Label>
+                    </HBox>
+                    <PasswordField fx:id="passwordField" promptText="Create a password" prefHeight="45.0">
+                        <font>
+                            <Font size="14.0"/>
+                        </font>
+                    </PasswordField>
+                </VBox>
+                
+                <!-- Confirm Password Field -->
+                <VBox spacing="6.0">
+                    <HBox>
+                        <Label text="Confirm Password" textFill="#374151">
+                            <font>
+                                <Font size="14.0"/>
+                            </font>
+                        </Label>
+                        <Label text=" *" textFill="#EF4444">
+                            <font>
+                                <Font size="14.0"/>
+                            </font>
+                        </Label>
+                    </HBox>
+                    <PasswordField fx:id="confirmPasswordField" promptText="Confirm your password" prefHeight="45.0">
+                        <font>
+                            <Font size="14.0"/>
+                        </font>
+                    </PasswordField>
+                </VBox>
+            </VBox>
+            
+            <!-- Register Button with Loading Indicator -->
+            <StackPane>
+                <VBox.margin>
+                    <Insets top="8.0"/>
+                </VBox.margin>
+                <Button fx:id="registerBtn" text="Create Account" prefHeight="50.0" prefWidth="1000.0" styleClass="button" onAction="#onRegisterClick">
+                    <font>
+                        <Font name="System Bold" size="16.0"/>
+                    </font>
+                    <cursor>
+                        <Cursor fx:constant="HAND"/>
+                    </cursor>
+                </Button>
+                <ProgressIndicator fx:id="loadingIndicator" prefWidth="30.0" prefHeight="30.0" visible="false" managed="false"/>
+            </StackPane>
+            
+            <Label text="By creating an account, you agree to our Terms and Privacy Policy" textFill="#9CA3AF" wrapText="true" alignment="CENTER">
+                <font>
+                    <Font size="12.0"/>
+                </font>
+            </Label>
+        </VBox>
+    </VBox>
+    
+</AnchorPane>

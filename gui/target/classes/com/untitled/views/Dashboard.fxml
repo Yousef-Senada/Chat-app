@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.shape.SVGPath?>
+
+<AnchorPane prefHeight="900.0" prefWidth="1200.0" styleClass="root" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.untitled.controllers.DashboardController">
+    
+    <VBox fx:id="sidebar" prefWidth="70.0" alignment="CENTER" styleClass="sidebar" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <padding>
+            <Insets top="20.0" bottom="20.0"/>
+        </padding>
+        
+        <VBox alignment="CENTER" styleClass="sidebar-icon" onMouseClicked="#onMenuClick" style="-fx-cursor: hand;">
+            <ImageView fitHeight="22.0" fitWidth="22.0" preserveRatio="true">
+                <image>
+                    <Image url="@../images/menu.png"/>
+                </image>
+            </ImageView>
+        </VBox>
+        
+        <VBox fx:id="chatNavIcon" alignment="CENTER" styleClass="sidebar-icon-active" style="-fx-cursor: hand;">
+            <VBox.margin>
+                <Insets top="16.0"/>
+            </VBox.margin>
+            <Label fx:id="chatIcon" text="💬" style="-fx-font-size: 18px;"/>
+        </VBox>
+        
+        <VBox fx:id="contactsNavIcon" alignment="CENTER" styleClass="sidebar-icon" onMouseClicked="#onContactsClick" style="-fx-cursor: hand;">
+            <VBox.margin>
+                <Insets top="12.0"/>
+            </VBox.margin>
+            <Label fx:id="contactsIcon" text="👥" style="-fx-font-size: 18px; -fx-text-fill: #6B7280;"/>
+        </VBox>
+        
+        <VBox fx:id="settingsNavIcon" alignment="CENTER" styleClass="sidebar-icon" onMouseClicked="#onSettingsClick" style="-fx-cursor: hand;">
+            <VBox.margin>
+                <Insets top="12.0"/>
+            </VBox.margin>
+            <ImageView fitHeight="22.0" fitWidth="22.0" preserveRatio="true">
+                <image>
+                    <Image url="@../images/Settings.png"/>
+                </image>
+            </ImageView>
+        </VBox>
+        
+        <Region VBox.vgrow="ALWAYS"/>
+        
+        <VBox alignment="CENTER" styleClass="sidebar-icon" onMouseClicked="#onLogoutClick" style="-fx-cursor: hand;">
+            <Label text="⏻" style="-fx-font-size: 18px; -fx-text-fill: #6B7280;"/>
+        </VBox>
+    </VBox>
+    
+    <VBox prefWidth="350.0" styleClass="panel" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="70.0" AnchorPane.topAnchor="0.0">
+        
+        <HBox alignment="CENTER_LEFT" prefHeight="70.0" styleClass="panel-header">
+            <padding>
+                <Insets left="20.0" right="20.0"/>
+            </padding>
+            <Label text="Chats" styleClass="label-title">
+                <font>
+                    <Font name="System Bold" size="24.0"/>
+                </font>
+            </Label>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button fx:id="newChatBtn" styleClass="button" text="+ New" onAction="#onNewChatClick">
+                <font>
+                    <Font size="12.0"/>
+                </font>
+            </Button>
+        </HBox>
+        
+        <HBox alignment="CENTER" prefHeight="60.0">
+            <padding>
+                <Insets left="16.0" right="16.0"/>
+            </padding>
+            <TextField fx:id="searchField" promptText="Search conversations..." styleClass="search-field" HBox.hgrow="ALWAYS">
+                <font>
+                    <Font size="14.0"/>
+                </font>
+            </TextField>
+        </HBox>
+        
+        <ScrollPane fitToWidth="true" styleClass="scroll-pane" VBox.vgrow="ALWAYS">
+            <VBox fx:id="chatListContainer" spacing="2.0">
+                <padding>
+                    <Insets bottom="10.0" top="10.0"/>
+                </padding>
+                </VBox>
+        </ScrollPane>
+    </VBox>
+    
+    <VBox fx:id="welcomePanel" alignment="CENTER" styleClass="chat-area" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="420.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <VBox alignment="CENTER" spacing="20.0" styleClass="empty-state">
+            <Label text="💬" style="-fx-font-size: 64px;"/>
+            <Label text="Welcome to ChatApp" styleClass="label-title">
+                <font>
+                    <Font name="System Bold" size="28.0"/>
+                </font>
+            </Label>
+            <Label text="Select a conversation or start a new chat" styleClass="label-subtitle" textFill="#6B7280">
+                <font>
+                    <Font size="16.0"/>
+                </font>
+            </Label>
+            <Button text="Start New Conversation" styleClass="button" onAction="#onNewChatClick">
+                <VBox.margin>
+                    <Insets top="20.0"/>
+                </VBox.margin>
+            </Button>
+        </VBox>
+    </VBox>
+
+</AnchorPane>
+
