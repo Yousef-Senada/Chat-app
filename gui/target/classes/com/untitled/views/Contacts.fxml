@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.shape.SVGPath?>
+
+<AnchorPane prefHeight="900.0" prefWidth="1200.0" styleClass="root" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.untitled.controllers.ContactsController">
+    
+    <VBox fx:id="sidebar" prefWidth="70.0" alignment="CENTER" styleClass="sidebar" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <padding>
+            <Insets top="20.0" bottom="20.0"/>
+        </padding>
+        
+        <VBox alignment="CENTER" styleClass="sidebar-icon" style="-fx-cursor: hand;">
+            <ImageView fitHeight="22.0" fitWidth="22.0" preserveRatio="true">
+                <image>
+                    <Image url="@../images/menu.png"/>
+                </image>
+            </ImageView>
+        </VBox>
+        
+        <VBox alignment="CENTER" styleClass="sidebar-icon" onMouseClicked="#onChatsClick" style="-fx-cursor: hand;">
+            <VBox.margin>
+                <Insets top="16.0"/>
+            </VBox.margin>
+            <Label text="💬" style="-fx-font-size: 18px; -fx-text-fill: #6B7280;"/>
+        </VBox>
+        
+        <VBox alignment="CENTER" styleClass="sidebar-icon-active" style="-fx-cursor: hand;">
+            <VBox.margin>
+                <Insets top="12.0"/>
+            </VBox.margin>
+            <Label text="👥" style="-fx-font-size: 18px;"/>
+        </VBox>
+        
+        <VBox alignment="CENTER" styleClass="sidebar-icon" onMouseClicked="#onSettingsClick" style="-fx-cursor: hand;">
+            <VBox.margin>
+                <Insets top="12.0"/>
+            </VBox.margin>
+            <ImageView fitHeight="22.0" fitWidth="22.0" preserveRatio="true">
+                <image>
+                    <Image url="@../images/Settings.png"/>
+                </image>
+            </ImageView>
+        </VBox>
+        
+        <Region VBox.vgrow="ALWAYS"/>
+        
+        <VBox alignment="CENTER" styleClass="sidebar-icon" onMouseClicked="#onLogoutClick" style="-fx-cursor: hand;">
+            <Label text="⏻" style="-fx-font-size: 18px; -fx-text-fill: #6B7280;"/>
+        </VBox>
+    </VBox>
+    
+    <VBox prefWidth="400.0" styleClass="panel" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="70.0" AnchorPane.topAnchor="0.0">
+        
+        <HBox alignment="CENTER_LEFT" prefHeight="70.0" styleClass="panel-header">
+            <padding>
+                <Insets left="20.0" right="20.0"/>
+            </padding>
+            <Label text="Contacts" styleClass="label-title">
+                <font>
+                    <Font name="System Bold" size="24.0"/>
+                </font>
+            </Label>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Label fx:id="contactCountLabel" text="8 contacts" textFill="#6B7280">
+                <font>
+                    <Font size="14.0"/>
+                </font>
+            </Label>
+            <Button fx:id="addContactBtn" text="+ Add" onAction="#onAddContactClick" style="-fx-background-color: #8B5CF6; -fx-text-fill: white; -fx-background-radius: 8; -fx-padding: 8 16; -fx-cursor: hand;">
+                <HBox.margin>
+                    <Insets left="12.0"/>
+                </HBox.margin>
+                <font>
+                    <Font size="13.0"/>
+                </font>
+            </Button>
+        </HBox>
+        
+        <!-- Add Contact Form (hidden by default) -->
+        <VBox fx:id="addContactForm" spacing="12.0" visible="false" managed="false" style="-fx-background-color: #F9FAFB; -fx-padding: 16;">
+            <Label text="Add New Contact" style="-fx-font-weight: bold;">
+                <font>
+                    <Font size="16.0"/>
+                </font>
+            </Label>
+            
+            <VBox spacing="4.0">
+                <Label text="Phone Number" textFill="#374151">
+                    <font>
+                        <Font size="12.0"/>
+                    </font>
+                </Label>
+                <TextField fx:id="phoneNumberField" promptText="e.g. 01153666001" prefHeight="40.0" style="-fx-background-color: white; -fx-background-radius: 8; -fx-border-color: #E5E7EB; -fx-border-radius: 8;">
+                    <font>
+                        <Font size="13.0"/>
+                    </font>
+                </TextField>
+            </VBox>
+            
+            <VBox spacing="4.0">
+                <Label text="Display Name" textFill="#374151">
+                    <font>
+                        <Font size="12.0"/>
+                    </font>
+                </Label>
+                <TextField fx:id="displayNameField" promptText="e.g. John Doe" prefHeight="40.0" style="-fx-background-color: white; -fx-background-radius: 8; -fx-border-color: #E5E7EB; -fx-border-radius: 8;">
+                    <font>
+                        <Font size="13.0"/>
+                    </font>
+                </TextField>
+            </VBox>
+            
+            <Label fx:id="addContactErrorLabel" textFill="#EF4444" wrapText="true" visible="false" managed="false">
+                <font>
+                    <Font size="12.0"/>
+                </font>
+            </Label>
+            
+            <HBox spacing="12.0" alignment="CENTER_RIGHT">
+                <Button text="Cancel" onAction="#onCancelAddContact" style="-fx-background-color: #E5E7EB; -fx-text-fill: #374151; -fx-background-radius: 8; -fx-padding: 8 16; -fx-cursor: hand;">
+                    <font>
+                        <Font size="13.0"/>
+                    </font>
+                </Button>
+                <Button text="Add Contact" onAction="#onConfirmAddContact" style="-fx-background-color: #22C55E; -fx-text-fill: white; -fx-background-radius: 8; -fx-padding: 8 16; -fx-cursor: hand;">
+                    <font>
+                        <Font size="13.0"/>
+                    </font>
+                </Button>
+            </HBox>
+        </VBox>
+        
+        <HBox alignment="CENTER" prefHeight="60.0">
+            <padding>
+                <Insets left="16.0" right="16.0"/>
+            </padding>
+            <TextField fx:id="searchField" promptText="Search contacts..." styleClass="search-field" HBox.hgrow="ALWAYS">
+                <font>
+                    <Font size="14.0"/>
+                </font>
+            </TextField>
+        </HBox>
+        
+        <ScrollPane fitToWidth="true" styleClass="scroll-pane" VBox.vgrow="ALWAYS">
+            <VBox fx:id="contactListContainer" spacing="0">
+                <padding>
+                    <Insets bottom="10.0" top="10.0"/>
+                </padding>
+                </VBox>
+        </ScrollPane>
+    </VBox>
+    
+    <VBox fx:id="detailsPanel" alignment="TOP_CENTER" styleClass="panel" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="470.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        
+        <VBox fx:id="emptyDetailsState" alignment="CENTER" spacing="20.0" VBox.vgrow="ALWAYS">
+            <Label text="👤" style="-fx-font-size: 64px;"/>
+            <Label text="Select a Contact" styleClass="label-title">
+                <font>
+                    <Font name="System Bold" size="24.0"/>
+                </font>
+            </Label>
+            <Label text="Choose a contact from the list to view details" textFill="#6B7280">
+                <font>
+                    <Font size="14.0"/>
+                </font>
+            </Label>
+        </VBox>
+        
+        <VBox fx:id="contactDetailsView" alignment="TOP_CENTER" spacing="20.0" visible="false" managed="false">
+            <padding>
+                <Insets top="60.0" left="40.0" right="40.0" bottom="40.0"/>
+            </padding>
+            
+            <Circle fx:id="contactAvatar" radius="60.0" fill="#8B5CF6"/>
+            
+            <Label fx:id="contactNameLabel" text="Contact Name" styleClass="label-title">
+                <font>
+                    <Font name="System Bold" size="24.0"/>
+                </font>
+            </Label>
+            
+            <HBox alignment="CENTER" spacing="8.0">
+                <Circle fx:id="statusIndicator" radius="5.0" fill="#22C55E"/>
+                <Label fx:id="contactStatusLabel" text="Online" textFill="#22C55E">
+                    <font>
+                        <Font size="14.0"/>
+                    </font>
+                </Label>
+            </HBox>
+            
+            <HBox alignment="CENTER" spacing="20.0">
+                <VBox.margin>
+                    <Insets top="20.0"/>
+                </VBox.margin>
+                
+                <VBox alignment="CENTER" spacing="8.0" styleClass="sidebar-icon" style="-fx-cursor: hand; -fx-background-color: #F3E8FF; -fx-background-radius: 50; -fx-padding: 16;">
+                    <ImageView fitHeight="24.0" fitWidth="24.0" preserveRatio="true">
+                        <image>
+                            <Image url="@../images/Phone.png"/>
+                        </image>
+                    </ImageView>
+                    <Label text="Call" textFill="#8B5CF6">
+                        <font>
+                            <Font size="12.0"/>
+                        </font>
+                    </Label>
+                </VBox>
+                
+                <VBox alignment="CENTER" spacing="8.0" onMouseClicked="#onStartChatClick" style="-fx-cursor: hand; -fx-background-color: #DCFCE7; -fx-background-radius: 50; -fx-padding: 16;">
+                    <ImageView fitHeight="24.0" fitWidth="24.0" preserveRatio="true">
+                        <image>
+                            <Image url="@../images/Chat.png"/>
+                        </image>
+                    </ImageView>
+                    <Label text="Message" textFill="#22C55E">
+                        <font>
+                            <Font size="12.0"/>
+                        </font>
+                    </Label>
+                </VBox>
+                
+                <VBox alignment="CENTER" spacing="8.0" style="-fx-cursor: hand; -fx-background-color: #FEF9C3; -fx-background-radius: 50; -fx-padding: 16;">
+                    <ImageView fitHeight="24.0" fitWidth="24.0" preserveRatio="true">
+                        <image>
+                            <Image url="@../images/cam.png"/>
+                        </image>
+                    </ImageView>
+                    <Label text="Video" textFill="#CA8A04">
+                        <font>
+                            <Font size="12.0"/>
+                        </font>
+                    </Label>
+                </VBox>
+            </HBox>
+            
+            <VBox styleClass="card" spacing="16.0" prefWidth="400.0">
+                <VBox.margin>
+                    <Insets top="30.0"/>
+                </VBox.margin>
+                
+                <Label text="Contact Information" style="-fx-font-weight: bold;">
+                    <font>
+                        <Font size="16.0"/>
+                    </font>
+                </Label>
+                
+                <HBox spacing="12.0">
+                    <Label text="📧" style="-fx-font-size: 18px;"/>
+                    <VBox>
+                        <Label text="Email" textFill="#6B7280">
+                            <font>
+                                <Font size="12.0"/>
+                            </font>
+                        </Label>
+                        <Label fx:id="contactEmailLabel" text="email@example.com">
+                            <font>
+                                <Font size="14.0"/>
+                            </font>
+                        </Label>
+                    </VBox>
+                </HBox>
+                
+                <HBox spacing="12.0">
+                    <Label text="💬" style="-fx-font-size: 18px;"/>
+                    <VBox>
+                        <Label text="Status Message" textFill="#6B7280">
+                            <font>
+                                <Font size="12.0"/>
+                            </font>
+                        </Label>
+                        <Label fx:id="contactStatusMsgLabel" text="Available">
+                            <font>
+                                <Font size="14.0"/>
+                            </font>
+                        </Label>
+                    </VBox>
+                </HBox>
+            </VBox>
+            
+            <Button text="Start Conversation" styleClass="button" prefWidth="300.0" onAction="#onStartChatClick">
+                <VBox.margin>
+                    <Insets top="20.0"/>
+                </VBox.margin>
+            </Button>
+        </VBox>
+    </VBox>
+
+</AnchorPane>
+

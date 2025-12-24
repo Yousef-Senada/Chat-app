@@ -1,0 +1,390 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.shape.SVGPath?>
+
+<AnchorPane prefHeight="900.0" prefWidth="1200.0" styleClass="root" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.untitled.controllers.SettingsController">
+    
+    <VBox fx:id="sidebar" prefWidth="70.0" alignment="CENTER" styleClass="sidebar" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <padding>
+            <Insets top="20.0" bottom="20.0"/>
+        </padding>
+        
+        <VBox alignment="CENTER" styleClass="sidebar-icon" style="-fx-cursor: hand;">
+            <ImageView fitHeight="22.0" fitWidth="22.0" preserveRatio="true">
+                <image>
+                    <Image url="@../images/menu.png"/>
+                </image>
+            </ImageView>
+        </VBox>
+        
+        <VBox alignment="CENTER" styleClass="sidebar-icon" onMouseClicked="#onChatsClick" style="-fx-cursor: hand;">
+            <VBox.margin>
+                <Insets top="16.0"/>
+            </VBox.margin>
+            <Label text="💬" style="-fx-font-size: 18px; -fx-text-fill: #6B7280;"/>
+        </VBox>
+        
+        <VBox alignment="CENTER" styleClass="sidebar-icon" onMouseClicked="#onContactsClick" style="-fx-cursor: hand;">
+            <VBox.margin>
+                <Insets top="12.0"/>
+            </VBox.margin>
+            <Label text="👥" style="-fx-font-size: 18px; -fx-text-fill: #6B7280;"/>
+        </VBox>
+        
+        <VBox alignment="CENTER" styleClass="sidebar-icon-active" style="-fx-cursor: hand;">
+            <VBox.margin>
+                <Insets top="12.0"/>
+            </VBox.margin>
+            <ImageView fitHeight="22.0" fitWidth="22.0" preserveRatio="true">
+                <image>
+                    <Image url="@../images/Settings-white.png"/>
+                </image>
+            </ImageView>
+        </VBox>
+        
+        <Region VBox.vgrow="ALWAYS"/>
+        
+        <VBox alignment="CENTER" styleClass="sidebar-icon" onMouseClicked="#onLogoutClick" style="-fx-cursor: hand;">
+            <Label text="⏻" style="-fx-font-size: 18px; -fx-text-fill: #6B7280;"/>
+        </VBox>
+    </VBox>
+    
+    <ScrollPane fitToWidth="true" styleClass="scroll-pane" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="70.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <VBox spacing="24.0" style="-fx-background-color: #F7F7F9;">
+            <padding>
+                <Insets top="30.0" right="40.0" bottom="40.0" left="40.0"/>
+            </padding>
+            
+            <HBox alignment="CENTER_LEFT">
+                <Label text="Settings" styleClass="label-title">
+                    <font>
+                        <Font name="System Bold" size="28.0"/>
+                    </font>
+                </Label>
+            </HBox>
+            
+            <VBox styleClass="settings-section" spacing="20.0">
+                <Label text="Profile" styleClass="settings-title">
+                    <font>
+                        <Font name="System Bold" size="18.0"/>
+                    </font>
+                </Label>
+                
+                <HBox spacing="24.0" alignment="CENTER_LEFT">
+                    <VBox alignment="CENTER" spacing="12.0">
+                        <Circle fx:id="profileAvatar" radius="50.0" fill="#8B5CF6"/>
+                        <Button text="Change Photo" styleClass="button-secondary">
+                            <font>
+                                <Font size="12.0"/>
+                            </font>
+                        </Button>
+                    </VBox>
+                    
+                    <VBox spacing="16.0" HBox.hgrow="ALWAYS">
+                        <VBox spacing="6.0">
+                            <Label text="Display Name" textFill="#374151">
+                                <font>
+                                    <Font size="14.0"/>
+                                </font>
+                            </Label>
+                            <TextField fx:id="nameField" promptText="Your name" prefHeight="44.0" prefWidth="400.0">
+                                <font>
+                                    <Font size="14.0"/>
+                                </font>
+                            </TextField>
+                        </VBox>
+                        
+                        <VBox spacing="6.0">
+                            <Label text="Status Message" textFill="#374151">
+                                <font>
+                                    <Font size="14.0"/>
+                                </font>
+                            </Label>
+                            <TextField fx:id="statusField" promptText="What's on your mind?" prefHeight="44.0" prefWidth="400.0">
+                                <font>
+                                    <Font size="14.0"/>
+                                </font>
+                            </TextField>
+                        </VBox>
+                        
+                        <VBox spacing="6.0">
+                            <Label text="Email" textFill="#374151">
+                                <font>
+                                    <Font size="14.0"/>
+                                </font>
+                            </Label>
+                            <TextField fx:id="emailField" promptText="your@email.com" prefHeight="44.0" prefWidth="400.0" editable="false" style="-fx-background-color: #F3F4F6;">
+                                <font>
+                                    <Font size="14.0"/>
+                                </font>
+                            </TextField>
+                        </VBox>
+                        
+                        <Button text="Save Changes" styleClass="button" onAction="#onSaveProfile">
+                            <VBox.margin>
+                                <Insets top="8.0"/>
+                            </VBox.margin>
+                        </Button>
+                    </VBox>
+                </HBox>
+            </VBox>
+            
+            <VBox styleClass="settings-section" spacing="16.0">
+                <Label text="Appearance" styleClass="settings-title">
+                    <font>
+                        <Font name="System Bold" size="18.0"/>
+                    </font>
+                </Label>
+                
+                <HBox spacing="20.0" alignment="CENTER_LEFT">
+                    <VBox spacing="4.0" HBox.hgrow="ALWAYS">
+                        <Label text="Theme" style="-fx-font-weight: bold;">
+                            <font>
+                                <Font size="14.0"/>
+                            </font>
+                        </Label>
+                        <Label text="Choose between light and dark theme" textFill="#6B7280">
+                            <font>
+                                <Font size="12.0"/>
+                            </font>
+                        </Label>
+                    </VBox>
+                    <HBox spacing="10.0">
+                        <Button fx:id="lightThemeBtn" text="☀️ Light" styleClass="button" style="-fx-background-color: #8B5CF6;">
+                            <font>
+                                <Font size="12.0"/>
+                            </font>
+                        </Button>
+                        <Button fx:id="darkThemeBtn" text="🌙 Dark" styleClass="button-secondary">
+                            <font>
+                                <Font size="12.0"/>
+                            </font>
+                        </Button>
+                    </HBox>
+                </HBox>
+                
+                <Separator/>
+                
+                <HBox spacing="20.0" alignment="CENTER_LEFT">
+                    <VBox spacing="4.0" HBox.hgrow="ALWAYS">
+                        <Label text="Font Size" style="-fx-font-weight: bold;">
+                            <font>
+                                <Font size="14.0"/>
+                            </font>
+                        </Label>
+                        <Label text="Adjust the text size in conversations" textFill="#6B7280">
+                            <font>
+                                <Font size="12.0"/>
+                            </font>
+                        </Label>
+                    </VBox>
+                    <HBox spacing="10.0">
+                        <Button text="A-" styleClass="button-secondary" prefWidth="50.0"/>
+                        <Label text="Medium" alignment="CENTER" prefWidth="80.0">
+                            <font>
+                                <Font size="14.0"/>
+                            </font>
+                        </Label>
+                        <Button text="A+" styleClass="button-secondary" prefWidth="50.0"/>
+                    </HBox>
+                </HBox>
+            </VBox>
+            
+            <VBox styleClass="settings-section" spacing="16.0">
+                <Label text="Notifications" styleClass="settings-title">
+                    <font>
+                        <Font name="System Bold" size="18.0"/>
+                    </font>
+                </Label>
+                
+                <HBox spacing="20.0" alignment="CENTER_LEFT">
+                    <VBox spacing="4.0" HBox.hgrow="ALWAYS">
+                        <Label text="Message Notifications" style="-fx-font-weight: bold;">
+                            <font>
+                                <Font size="14.0"/>
+                            </font>
+                        </Label>
+                        <Label text="Get notified when you receive new messages" textFill="#6B7280">
+                            <font>
+                                <Font size="12.0"/>
+                            </font>
+                        </Label>
+                    </VBox>
+                    <CheckBox fx:id="messageNotifCheckbox" selected="true"/>
+                </HBox>
+                
+                <Separator/>
+                
+                <HBox spacing="20.0" alignment="CENTER_LEFT">
+                    <VBox spacing="4.0" HBox.hgrow="ALWAYS">
+                        <Label text="Sound" style="-fx-font-weight: bold;">
+                            <font>
+                                <Font size="14.0"/>
+                            </font>
+                        </Label>
+                        <Label text="Play sound for new messages" textFill="#6B7280">
+                            <font>
+                                <Font size="12.0"/>
+                            </font>
+                        </Label>
+                    </VBox>
+                    <CheckBox fx:id="soundCheckbox" selected="true"/>
+                </HBox>
+                
+                <Separator/>
+                
+                <HBox spacing="20.0" alignment="CENTER_LEFT">
+                    <VBox spacing="4.0" HBox.hgrow="ALWAYS">
+                        <Label text="Desktop Notifications" style="-fx-font-weight: bold;">
+                            <font>
+                                <Font size="14.0"/>
+                            </font>
+                        </Label>
+                        <Label text="Show notifications on your desktop" textFill="#6B7280">
+                            <font>
+                                <Font size="12.0"/>
+                            </font>
+                        </Label>
+                    </VBox>
+                    <CheckBox fx:id="desktopNotifCheckbox" selected="true"/>
+                </HBox>
+            </VBox>
+            
+            <VBox styleClass="settings-section" spacing="16.0">
+                <Label text="Privacy" styleClass="settings-title">
+                    <font>
+                        <Font name="System Bold" size="18.0"/>
+                    </font>
+                </Label>
+                
+                <HBox spacing="20.0" alignment="CENTER_LEFT">
+                    <VBox spacing="4.0" HBox.hgrow="ALWAYS">
+                        <Label text="Online Status" style="-fx-font-weight: bold;">
+                            <font>
+                                <Font size="14.0"/>
+                            </font>
+                        </Label>
+                        <Label text="Show when you're online to others" textFill="#6B7280">
+                            <font>
+                                <Font size="12.0"/>
+                            </font>
+                        </Label>
+                    </VBox>
+                    <CheckBox fx:id="onlineStatusCheckbox" selected="true"/>
+                </HBox>
+                
+                <Separator/>
+                
+                <HBox spacing="20.0" alignment="CENTER_LEFT">
+                    <VBox spacing="4.0" HBox.hgrow="ALWAYS">
+                        <Label text="Read Receipts" style="-fx-font-weight: bold;">
+                            <font>
+                                <Font size="14.0"/>
+                            </font>
+                        </Label>
+                        <Label text="Let others know when you've read their messages" textFill="#6B7280">
+                            <font>
+                                <Font size="12.0"/>
+                            </font>
+                        </Label>
+                    </VBox>
+                    <CheckBox fx:id="readReceiptsCheckbox" selected="true"/>
+                </HBox>
+            </VBox>
+            
+            <VBox styleClass="settings-section" spacing="16.0">
+                <Label text="Account" styleClass="settings-title">
+                    <font>
+                        <Font name="System Bold" size="18.0"/>
+                    </font>
+                </Label>
+                
+                <HBox spacing="20.0" alignment="CENTER_LEFT">
+                    <VBox spacing="4.0" HBox.hgrow="ALWAYS">
+                        <Label text="Change Password" style="-fx-font-weight: bold;">
+                            <font>
+                                <Font size="14.0"/>
+                            </font>
+                        </Label>
+                        <Label text="Update your account password" textFill="#6B7280">
+                            <font>
+                                <Font size="12.0"/>
+                            </font>
+                        </Label>
+                    </VBox>
+                    <Button text="Change" styleClass="button-secondary"/>
+                </HBox>
+                
+                <Separator/>
+                
+                <HBox spacing="20.0" alignment="CENTER_LEFT">
+                    <VBox spacing="4.0" HBox.hgrow="ALWAYS">
+                        <Label text="Sign Out" style="-fx-font-weight: bold;">
+                            <font>
+                                <Font size="14.0"/>
+                            </font>
+                        </Label>
+                        <Label text="Sign out from your account on this device" textFill="#6B7280">
+                            <font>
+                                <Font size="12.0"/>
+                            </font>
+                        </Label>
+                    </VBox>
+                    <Button text="Sign Out" styleClass="button-danger" onAction="#onLogoutClick"/>
+                </HBox>
+                
+                <Separator/>
+                
+                <HBox spacing="20.0" alignment="CENTER_LEFT">
+                    <VBox spacing="4.0" HBox.hgrow="ALWAYS">
+                        <Label text="Delete Account" style="-fx-font-weight: bold;" textFill="#EF4444">
+                            <font>
+                                <Font size="14.0"/>
+                            </font>
+                        </Label>
+                        <Label text="Permanently delete your account and all data" textFill="#6B7280">
+                            <font>
+                                <Font size="12.0"/>
+                            </font>
+                        </Label>
+                    </VBox>
+                    <Button text="Delete" style="-fx-background-color: transparent; -fx-text-fill: #EF4444; -fx-border-color: #EF4444; -fx-border-radius: 8;"/>
+                </HBox>
+            </VBox>
+            
+            <VBox alignment="CENTER" spacing="8.0">
+                <VBox.margin>
+                    <Insets top="20.0"/>
+                </VBox.margin>
+                <Label text="ChatApp v1.0.0" textFill="#9CA3AF">
+                    <font>
+                        <Font size="12.0"/>
+                    </font>
+                </Label>
+                <Label text="Made with ❤️ using JavaFX" textFill="#9CA3AF">
+                    <font>
+                        <Font size="12.0"/>
+                    </font>
+                </Label>
+            </VBox>
+        </VBox>
+    </ScrollPane>
+
+</AnchorPane>
+
